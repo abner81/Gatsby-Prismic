@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+
+import * as api from '../../api/apiService'
 import formatNumber from "../../helpers/FormatNumber";
 import ModalComponent from "./Modal";
+
 import * as S from "./styled";
 
 export default function ListTransaction({
@@ -11,12 +14,22 @@ export default function ListTransaction({
   day,
   index,
   date,
-  id
+  id,
+  apiRefresh
 }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
+
+  const handleDeleteTransaction = async () => {
+    await api.deleteTransactionByiD(id)
+    apiRefresh()
+  }
+
+  const handleApiRefresh = () => {
+    apiRefresh()
+  }
 
   return (
     <S.ListWrapper className="container">
@@ -41,8 +54,10 @@ export default function ListTransaction({
           value={value}
           date={date}
           id={id}
+          type={type}
+          apiRefresh={handleApiRefresh}
         />
-        <S.ListButtonModal>
+        <S.ListButtonModal onClick={handleDeleteTransaction}>
           <S.ListIconDelete />
         </S.ListButtonModal>
       </S.ListRigthDiv>

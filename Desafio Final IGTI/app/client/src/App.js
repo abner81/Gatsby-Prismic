@@ -16,22 +16,21 @@ import Spinner from "./components/Spinner/index";
 export default function App() {
   const [periodState, setPeriodState] = useState(PERIOD[0]);
   const [transactions, setTransactions] = useState([]);
+  const [modalSubmit, setModalSubmit] = useState(1);
 
   useEffect(() => {
     try {
-      api.getAllTransactions(periodState).then((e) => setTransactions(e));
-    } catch (error) {
-      console.log("Erro ao se comunicar com a api");
-    }
-  }, []);
+      const requisition = async () => {
+        const req = await api.getAllTransactions(periodState);
+        const sortArray = req.sort((a, b) => a.day - b.day);
+        setTransactions(sortArray);
+      };
 
-  useEffect(() => {
-    try {
-      api.getAllTransactions(periodState).then((e) => setTransactions(e));
+      requisition();
     } catch (error) {
       console.log("Erro ao se comunicar com a api");
     }
-  }, [periodState]);
+  }, [periodState, modalSubmit]);
 
   const handleState = (event) => {
     setPeriodState(event);
@@ -46,6 +45,11 @@ export default function App() {
     if (event === "previous") setPeriodState(PERIOD[previousType]);
     if (event === "next") setPeriodState(PERIOD[nextType]);
   };
+
+  const handleGetApiRefresh = () => {
+    const number = modalSubmit + 1
+    setModalSubmit(number);
+  }
 
   return (
     <>
@@ -83,6 +87,7 @@ export default function App() {
                   index={index}
                   date={yearMonthDay}
                   id={_id}
+                  apiRefresh={handleGetApiRefresh}
                 />
               );
             })}

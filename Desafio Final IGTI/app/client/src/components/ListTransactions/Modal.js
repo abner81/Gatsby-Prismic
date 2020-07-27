@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 
+import * as api from '../../api/apiService'
 import { Modal } from "react-bootstrap";
 
 import * as S from "./styled";
@@ -14,14 +15,36 @@ const ModalComponent = ({
   id,
   description,
   value,
+  type,
+  apiRefresh
 }) => {
   const { register, handleSubmit, errors } = useForm();
-  const [formData, setFormData] = useState({})
-  
-  const onSubmit = (data) => setFormData(data);
-  console.log(formData);
+  const onSubmit = (data) => handleSubmitRequisition(data);
 
-  const handleFormRequisition = () => {};
+   const handleSubmitRequisition = async (data) => {
+    const fullDate = data.yearMonthDay;
+    const separateDate = fullDate.split('-')
+
+    const year = separateDate[0]
+    const month = separateDate[1]
+    const monthOneLength = parseInt(separateDate[1], 10)
+    const day = parseInt(separateDate[2], 10)
+    const yearMonth = `${year}-${month}`
+
+    const bodyRequisition = {
+      year: year,
+      month: monthOneLength,
+      day: day,
+      yearMonth: yearMonth,
+      type: type,
+      id: id,
+      ...data
+    };
+    apiRefresh()
+
+    const req = await api.updateModalTransaction(bodyRequisition, id);
+    return req
+  }
 
   return (
     <Modal show={state} onHide={handleClose}>

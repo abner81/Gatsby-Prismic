@@ -4,7 +4,7 @@ import Layout from '../components/Layout'
 import SEO from '../components/SEO'
 import HomepageBanner from '../components/HomepageBanner'
 import MainContent from '../components/MainContent'
-
+// d
 const Homepage = ({data}) => {
   const prismicContent = data.prismic.allHomepages.edges[0]
   if (!prismicContent) return null
